@@ -76,6 +76,10 @@ class Container
             $this->amocrm = $this->settings['amocrm'];
         }
 
+        if ($this->settings['moysklad']['enabled']) {
+            $this->moysklad = $this->settings['moysklad'];
+        }
+
         // Paths
         $this->logDir = $this->file['dirname'] . '/../../data/logs/';
         $this->saveDir = $this->file['dirname'] . '/../../data/upload/';
@@ -92,6 +96,8 @@ class Container
         $this->logformat   = "[$this->date][$this->domain] ";
         $this->errorLog    = $this->logDir . 'error/error.log';
         $this->mailLog     = $this->logDir . 'mail/mail.log';
+
+        $this->moyskladLog          = $this->logDir . 'order/moysklad.log';
 
         $this->ordersLog            = $this->logDir . 'order/order.log';
         $this->ordersUpdatesLog     = $this->logDir . 'order/update.log';

@@ -95,6 +95,19 @@ class MSRestApi
      */
     protected $timeout = 300;
 
+
+    /**
+     * Max requests per second
+     * @var integer
+     */
+    protected $rps = 4;
+
+    /**
+     * Time of last request
+     * @var integer
+     */
+    protected $lastRequestTime;
+
     /**
      * Class constructor
      * @param string $login
@@ -3973,6 +3986,20 @@ class MSRestApi
             $this->curl = curl_init();
         }
 
+        $time = microtime(true);
+        if ($this->lastRequestTime) {
+            $minDiff = 1 / $this->rps;
+            $diff = $time - $this->lastRequestTime;
+
+            if ($diff < $minDiff) {
+                $sleepTime = ($minDiff - $diff);
+                $seconds = (int) $sleepTime;
+                $nanoseconds = (int)(($sleepTime - $seconds) * 1000000000);
+                time_nanosleep($seconds, $nanoseconds);
+            }
+        }
+        $this->lastRequestTime = $time;
+
         //Set general arguments
         curl_setopt($this->curl, CURLOPT_USERAGENT, 'MS-API-client/1.1');
         curl_setopt($this->curl, CURLOPT_USERPWD, "{$this->login}:{$this->password}");
@@ -4150,7 +4177,23 @@ class MSRestApi
 
         return $this;
     }
- 
+
+    /**
+     * @param integer $rps
+     * @return MSRestApi
+     */
+    public function setRps($rps) {
+        $this->rps = $rps;
+
+        return $this;
+    }
+
+    /**
+     * @return integer
+     */
+    public function getRps() {
+        return $this->rps;
+    }
 }
 
 /**

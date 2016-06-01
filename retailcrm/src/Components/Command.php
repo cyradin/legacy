@@ -291,4 +291,22 @@ class Command
             }
         }
     }
+
+    public function runMoysklad()
+    {
+        if (!isset($this->container->moysklad)) {
+            CommandHelper::activateNotice('moysklad');
+            exit(1);
+        }
+
+        $lastSync = DataHelper::getDate($this->container->moyskladLog);
+        $rule = new Rule();
+
+        $handler = $rule->getHandler('MoyskladHandler');
+        $orders = $handler->prepare($lastSync);
+
+        if (!empty($orders)) {
+            $this->requestHelper->uploadOrders($orders, true, $this->container->moyskladLog);
+        }
+    }
 }

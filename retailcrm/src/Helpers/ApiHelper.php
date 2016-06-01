@@ -14,7 +14,7 @@ class ApiHelper
         $this->container = Container::getInstance();
     }
 
-    public function uploadOrders($orders, $check = true)
+    public function uploadOrders($orders, $check = true, $logFile = null)
     {
         $timemark = date('Y-m-d H:i:s');
 
@@ -29,7 +29,7 @@ class ApiHelper
             time_nanosleep(0, 250000000);
         }
 
-        $this->logger->put($timemark, $this->container->ordersLog);
+        $this->logger->put($timemark, $logFile ? $logFile : $this->container->ordersLog);
     }
 
     public function updateOrders($orders)
